@@ -16,7 +16,7 @@ class Program
             // Ask the user for the action
             Console.WriteLine("------------------------------------------------------------------------");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Press 'A' to add a new item, 'P' to display the table, or 'Q' to quit: ");
+            Console.Write("Press 'A' to add a new item, 'P' to display the table, 'S' to search, or 'Q' to quit: ");
             userChoice = Console.ReadKey().KeyChar;
             Console.WriteLine(); // Move to the next line after the user's input
             Console.ResetColor();
@@ -72,11 +72,18 @@ class Program
                     foreach (var product in productList)
                     {
                         Console.Write("{0,-15} {1,-15} ", product.Category, product.ProductName);
-                        Console.WriteLine("{0,-10:C}", product.Price);
+                        Console.WriteLine("{0,-10:C}", product.Price);      //'C' will give us "sek" 
                     }
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine("\nTotal Sum of Prices: {0:C}", productList.Sum(product => product.Price));
                     Console.ResetColor();
+                    break;
+
+                case 'S':
+                    // Search for a product by name
+                    Console.Write("Enter the product name to search: ");
+                    string searchTerm = Console.ReadLine();
+                    SearchAndDisplayResults(productList, searchTerm);
                     break;
 
                 case 'Q':
@@ -94,4 +101,28 @@ class Program
 
         } while (char.ToUpper(userChoice) != 'Q');
     }
+    //-----------------------------
+
+    static void SearchAndDisplayResults(List<Product> productList, string searchTerm)
+    {
+        // Display the entire list with the searched item highlighted
+        Console.WriteLine("\nList of Products:");
+        Console.WriteLine("{0,-15} {1,-15} {2,-10}", "Category", "Product", "Price");
+
+        foreach (var product in productList)
+        {
+            bool isSearchedItem = false;
+            if (!string.IsNullOrEmpty(searchTerm) && product.ProductName.ToLower().Contains(searchTerm.ToLower()))
+                isSearchedItem = true;
+
+            Console.BackgroundColor = isSearchedItem ? ConsoleColor.Yellow : ConsoleColor.Black;
+            Console.ForegroundColor = isSearchedItem ? ConsoleColor.Black : ConsoleColor.White;
+
+            Console.WriteLine("{0,-15} {1,-15} {2,-10:C}", product.Category, product.ProductName, product.Price);
+
+            // Reset the console colors
+            Console.ResetColor();
+        }
+    }
+
 }
